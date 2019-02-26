@@ -4,6 +4,9 @@ from sklearn.metrics import accuracy_score
 import pandas as pd
 from sklearn.model_selection import KFold  # create indices for CV
 from sklearn.model_selection import cross_val_score
+from sklearn import preprocessing
+import matplotlib.pyplot as plt
+from matplotlib import style
 
 from plotify import Plotify
 
@@ -61,6 +64,19 @@ def find_best_k(X_train, X_test, y_train, y_test, possible_ks):
 
 best_k = find_best_k(X_train, X_test, y_train, y_test, possible_ks)
 
+plotify = Plotify()
+
+plotify.bar(
+    x_list=possible_ks,
+    y_list=mean_scores,
+    xlabel='k',
+    ylabel='Accuracy',
+    title='Different Accuracies using different value for k (not normalized)',
+    ymin=0.905,
+    ymax=0.94,
+    linewidth=1,
+    block=False
+)
 
 # Exercise 3
 
@@ -69,4 +85,30 @@ clf.fit(X_train, y_train)
 accuracy = clf.score(X_test, y_test)
 print('Best k accuracy: ', accuracy)
 
+# Exercise 4
+
+
+# version 1
+scaler = preprocessing.StandardScaler().fit(X_train) 
+X_trainN = scaler.transform(X_train)
+X_testN = scaler.transform(X_test)
+print('version 1')
+print(scaler.mean_)
+
+mean_scores = []
+best_k = find_best_k(X_trainN, X_testN, y_train, y_test, possible_ks)
+
+plotify.bar(
+    x_list=possible_ks,
+    y_list=mean_scores,
+    xlabel='k',
+    ylabel='Accuracy',
+    title='Different Accuracies using different value for k (normalized)',
+    ymin=0.92,
+    ymax=0.95,
+    linewidth=1,
+    block=False
+)
+
+plt.show()
 

@@ -1,28 +1,9 @@
-# Copyright(c) 2019 Andras Csepreghy
-
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files(the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-
-# The above copyright notice and this permission notice shall be included in all
-# copies or substantial portions of the Software.
-
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-# SOFTWARE.
-
 from matplotlib import rcParams
 import matplotlib.font_manager
 import matplotlib.ticker as ticker
 import matplotlib.pyplot as plt
 import numpy as np
+
 
 class Plotify:
   def __init__(self):
@@ -48,15 +29,15 @@ class Plotify:
     ax.set_facecolor(self.background_color)
 
     bplot = ax.boxplot(
-      data,
-      vert=True,
-      patch_artist=True,
-      labels=labels,
-      boxprops=dict(facecolor=self.c_white, color=self.c_white),
-      capprops=dict(color=self.c_white),
-      whiskerprops=dict(color=self.c_white),
-      flierprops=dict(markeredgecolor=self.c_white),
-      medianprops=dict(color=self.c_white)
+        data,
+        vert=True,
+        patch_artist=True,
+        labels=labels,
+        boxprops=dict(facecolor=self.c_white, color=self.c_white),
+        capprops=dict(color=self.c_white),
+        whiskerprops=dict(color=self.c_white),
+        flierprops=dict(markeredgecolor=self.c_white),
+        medianprops=dict(color=self.c_white)
     )
 
     for patch, color in zip(bplot['boxes'], self.plot_colors):
@@ -70,21 +51,19 @@ class Plotify:
     plt.grid(self.use_grid, color=self.grid_color)
 
     plt.show()
-  
+
   def scatter_plot(
-    self,
-    x_list,
-    y_list,
-    linewidth = 0.5,
-    alpha = 1,
-    xlabel = 'X label',
-    ylabel = 'Y label',
-    title = 'Title',
-    legend_labels = ('Men', 'Women')
+      self,
+      x_list,
+      y_list,
+      linewidth=0.5,
+      alpha=1,
+      xlabel='X label',
+      ylabel='Y label',
+      title='Title',
+      legend_labels=('Men', 'Women')
   ):
-    fig, ax = plt.subplots()
-    fig.patch.set_facecolor(self.background_color)
-    ax.set_facecolor(self.background_color)
+    fig, ax = self.get_figax()
 
     ax.set_ylabel(ylabel)
     ax.set_xlabel(xlabel)
@@ -93,11 +72,11 @@ class Plotify:
 
     for i, x in enumerate(x_list):
       ax.scatter(
-        x,
-        y_list[i],
-        linewidths = linewidth,
-        alpha=alpha,
-        c=self.plot_colors[i]
+          x,
+          y_list[i],
+          linewidths=linewidth,
+          alpha=alpha,
+          c=self.plot_colors[i]
       )
 
     ax.grid(self.use_grid, color=self.grid_color)
@@ -106,17 +85,14 @@ class Plotify:
     plt.show()
 
   def histogram(
-    self,
-    x_list,
-    ylabel = 'Y label',
-    xlabel = 'X label',
-    title = 'Title',
-    labels = ('Label 1', 'Label 2')
+      self,
+      x_list,
+      ylabel='Y label',
+      xlabel='X label',
+      title='Title',
+      labels=('Label 1', 'Label 2')
   ):
-    fig, ax = plt.subplots()
-    fig.patch.set_facecolor(self.background_color)
-    ax.set_facecolor(self.background_color)
-    ax.grid(self.use_grid, color=self.grid_color)
+    fig, ax = self.get_figax()
 
     for i, x in enumerate(x_list):
       ax.hist(x, int(np.max(x) - np.min(x)), facecolor=self.plot_colors[i])
@@ -128,3 +104,43 @@ class Plotify:
     ax.xaxis.set_major_locator(ticker.MultipleLocator(1))
 
     plt.show()
+
+  def bar(
+      self,
+      x_list,
+      y_list,
+      ylabel='Y label',
+      xlabel='X label',
+      title='Title',
+      ymin=0,
+      ymax=None,
+      linewidth=0.8,
+      use_x_list_as_xticks=False,
+      block=True
+  ):
+    fig, ax = self.get_figax()
+
+    ax.bar(x_list, height=y_list, width=linewidth, color=self.c_orange)
+    ax.set_ylim(ymin=ymin)
+    ax.set_ylabel(ylabel)
+    ax.set_xlabel(xlabel)
+    ax.set_title(title)
+
+    if ymax != None:
+      ax.set_ylim(ymax=ymax)
+
+    if use_x_list_as_xticks == True:
+      plt.xticks(x_list)
+    plt.xticks(rotation=70)
+    plt.tight_layout()
+    plt.show(block=block)
+
+  def get_figax(self):
+    fig, ax = plt.subplots()
+
+    fig.patch.set_facecolor(self.background_color)
+
+    ax.set_facecolor(self.background_color)
+    ax.grid(self.use_grid, color=self.grid_color)
+
+    return fig, ax
