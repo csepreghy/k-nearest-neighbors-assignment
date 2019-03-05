@@ -1,7 +1,6 @@
 import numpy as np
 from sklearn import preprocessing, neighbors
 from sklearn.metrics import accuracy_score
-import pandas as pd
 from sklearn.model_selection import KFold  # create indices for CV
 from sklearn.model_selection import cross_val_score
 from sklearn import preprocessing
@@ -21,8 +20,6 @@ y_train = data_train[:, -1]
 X_test = data_test[:, :-1]
 y_test = data_test[:, -1]
 
-print(X_train)
-
 # Exercise 1
 
 clf = neighbors.KNeighborsClassifier(n_neighbors=1)
@@ -30,7 +27,9 @@ clf.fit(X_train, y_train)
 
 accuracy = clf.score(X_test, y_test)
 
-print(accuracy)
+print('Exercise 1')
+
+print('accuracy of 1-NN: ', accuracy)
 
 # Exercise 2
 
@@ -52,17 +51,17 @@ def find_best_k(X_train, X_test, y_train, y_test, possible_ks):
     clf.fit(X_train, y_train)
 
     scores = cross_val_score(clf, X_test, y_test, cv=5)
-    print('scores', scores)
-    print("Accuracy: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
+    # print('scores', scores)
+    # print("Accuracy: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
 
     mean_score = scores.mean()
     mean_scores.append(mean_score)
   
   best_k = possible_ks[mean_scores.index(max(mean_scores))]
-  print('Best k is: ', best_k)
   return best_k
 
 best_k = find_best_k(X_train, X_test, y_train, y_test, possible_ks)
+print('(not normalized) best k is: ', best_k)
 
 plotify = Plotify()
 
@@ -75,7 +74,8 @@ plotify.bar(
     ymin=0.905,
     ymax=0.94,
     linewidth=1,
-    block=False
+    block=False,
+    use_x_list_as_xticks=True
 )
 
 # Exercise 3
@@ -83,7 +83,7 @@ plotify.bar(
 clf = neighbors.KNeighborsClassifier(n_neighbors=best_k)
 clf.fit(X_train, y_train)
 accuracy = clf.score(X_test, y_test)
-print('Best k accuracy: ', accuracy)
+print('(not normalized) best k accuracy: ', accuracy)
 
 # Exercise 4
 
@@ -92,22 +92,30 @@ print('Best k accuracy: ', accuracy)
 scaler = preprocessing.StandardScaler().fit(X_train) 
 X_trainN = scaler.transform(X_train)
 X_testN = scaler.transform(X_test)
-print('version 1')
+print('# Exercise 4')
+print('version 1 is correct.')
 print(scaler.mean_)
 
 mean_scores = []
+
 best_k = find_best_k(X_trainN, X_testN, y_train, y_test, possible_ks)
+
+clf = neighbors.KNeighborsClassifier(n_neighbors=best_k)
+clf.fit(X_train, y_train)
+accuracy = clf.score(X_test, y_test)
+print('(normalized) Best k accuracy: ', accuracy)
 
 plotify.bar(
     x_list=possible_ks,
     y_list=mean_scores,
-    xlabel='k',
+    xlabel='value of k',
     ylabel='Accuracy',
     title='Different Accuracies using different value for k (normalized)',
     ymin=0.92,
     ymax=0.95,
     linewidth=1,
-    block=False
+    block=False,
+    use_x_list_as_xticks=True
 )
 
 plt.show()

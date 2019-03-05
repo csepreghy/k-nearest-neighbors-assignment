@@ -116,7 +116,8 @@ class Plotify:
       ymax=None,
       linewidth=0.8,
       use_x_list_as_xticks=False,
-      block=True
+      block=True,
+      xticks_rotation=0
   ):
     fig, ax = self.get_figax()
 
@@ -131,8 +132,9 @@ class Plotify:
 
     if use_x_list_as_xticks == True:
       plt.xticks(x_list)
-    plt.xticks(rotation=70)
+    plt.xticks(rotation=xticks_rotation)
     plt.tight_layout()
+    
     plt.show(block=block)
 
   def get_figax(self):
